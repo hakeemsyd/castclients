@@ -23,7 +23,7 @@ io.on('connection', function(sock){
   });
 
   sock.on('onwebpeerconnected', function(data) {
-    console.log('web peer connect to node server');
+    console.log('Peer connected - ' + data.msg);
   });
 });
 

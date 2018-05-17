@@ -12,7 +12,7 @@ var remoteVideo = document.getElementById('remoteVideo');
 
 var socket = io.connect('http://localhost:8889');
 socket.on('connect', function(data) {
-  socket.emit('onwebpeerconnected', {msg: 'Hello from web client'});
+  socket.emit('onwebpeerconnected', {msg: 'Web client'});
 });
 
 socket.on('offer', function(data) {
