@@ -45,6 +45,7 @@ app.post('/rtc/connections', function(req, res) {
   } else if (req.query.type == 'iceserver') {
     if (req.query.candidate != undefined || req.query.candidate != null) {
       io.sockets.emit('setice', req.query.candidate);
+      res.send('OK');
     }
   }
 });
