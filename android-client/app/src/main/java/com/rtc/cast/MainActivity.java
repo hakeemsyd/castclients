@@ -1,10 +1,15 @@
 package com.rtc.cast;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.android.gms.cast.framework.CastButtonFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +33,7 @@ import java.util.List;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -110,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     private EglBase mRootEglBase;
     private org.webrtc.SurfaceViewRenderer mRemoteVideoView;
     private List<PeerConnection.IceServer> mRemoteIceServers;
+    private MenuItem mediaRouteMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +129,15 @@ public class MainActivity extends AppCompatActivity {
         mSocket.connect();
         mSocket.on("offer", mOnSdpOffer);
         mSocket.on("setice", mOnRemoteIceCandidate);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu,
+                R.id.media_route_menu_item);
+        return true;
     }
 
     private void initRtc() {

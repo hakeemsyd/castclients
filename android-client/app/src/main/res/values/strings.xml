@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">android-client</string>
+    <string name="media_route_menu_title">Casting Client</string>
+    <string name="action_settings">Setting</string>
 </resources>
