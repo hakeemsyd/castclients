@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.webrtc.AudioTrack;
 import org.webrtc.DefaultVideoDecoderFactory;
 import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
@@ -107,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
     private String mRemoteSdp;
     private Button mConnectButton;
     private EglBase mRootEglBase;
-    // private VideoRenderer mRemoteRenderer;
-    // private VideoSink mVideoSink;
     private org.webrtc.SurfaceViewRenderer mRemoteVideoView;
     private List<PeerConnection.IceServer> mRemoteIceServers;
 
@@ -131,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 PeerConnectionFactory.InitializationOptions.builder(this)
                         .setEnableVideoHwAcceleration(HW_ACCELERATION_ENABLED)
                         .createInitializationOptions();
+
         PeerConnectionFactory.initialize(initializationOptions);
 
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
@@ -139,13 +139,15 @@ public class MainActivity extends AppCompatActivity {
         DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(mRootEglBase.getEglBaseContext());
 
         PeerConnectionFactory.Builder builder = PeerConnectionFactory.builder();
-        mPeerConnectionFactory = builder.setVideoDecoderFactory(defaultVideoDecoderFactory).setVideoEncoderFactory(defaultVideoEncoderFactory).setOptions(options).createPeerConnectionFactory();
+        mPeerConnectionFactory = builder
+                .setVideoDecoderFactory(defaultVideoDecoderFactory)
+                .setVideoEncoderFactory(defaultVideoEncoderFactory)
+                .setOptions(options)
+                .createPeerConnectionFactory();
     }
 
     private void initViews() {
         mRemoteVideoView = (SurfaceViewRenderer) findViewById(R.id.remote_gl_surface_view);
-        //VideoRendererGui
-        //mRenderCallback = VideoRendererGui.create(0, 0, 100, 100, VideoRendererGui.ScalingType.SCALE_ASPECT_FILL, false);
         mConnectButton = (Button) findViewById(R.id.btn_connect);
         mConnectButton.setOnClickListener(mConnectButtonClickListener);
     }
@@ -208,15 +210,17 @@ public class MainActivity extends AppCompatActivity {
     private void gotRemoteStream(MediaStream stream) {
         //we have remote video stream. add to the renderer.
         final VideoTrack videoTrack = stream.videoTracks.get(0);
+        final AudioTrack audioTrack = stream.audioTracks.get(0);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "gotStream: " + stream.toString());
                 try {
-                    // mRemoteRenderer = new VideoRenderer(mRemoteVideoView);
-                    // mVideoSink = new VideoSink(mRemoteRenderer);
                     mRemoteVideoView.setVisibility(View.VISIBLE);
                     videoTrack.addSink(mRemoteVideoView);
+                    // force volume
+                    audioTrack.setVolume(10);
+                    audioTrack.setEnabled(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
