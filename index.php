@@ -1,1 +1,1 @@
-<?php header( 'Location: chromecast-client/index.html' ) ;  ?>
+<?php header( 'Location: /chromecast-client/index.html' ) ;  ?>
