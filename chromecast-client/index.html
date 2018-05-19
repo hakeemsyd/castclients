@@ -8,41 +8,58 @@
 -->
 <html>
 <head>
-
-  <meta charset="utf-8">
-  <meta name="description" content="WebRTC code samples">
-  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
-  <meta itemprop="description" content="Client-side WebRTC code samples">
-  <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png">
-  <meta itemprop="name" content="WebRTC code samples">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta id="theme-color" name="theme-color" content="#ffffff">
-
-  <base target="_blank">
-
-  <title>Chromecast RTC Cast Client</title>
-
-  <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
-  <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="../../../css/main.css" />
-  <link rel="stylesheet" href="css/main.css" />
-
+  <!-- Change the title tag to your app's name to display as the details text on the Cast device picker -->
+  <title>Casting app name</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/player.css" />
+  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
 </head>
-
 <body>
-
-  <div id="container">
-
-    <h1><a title="Casting">Local Casting Demo</a>
-    <video id="remoteVideo" autoplay></video>
-  </div>
+  <body style="margin: 0">
+      <div id="player" class="player">
+          <div class="media">
+              <video id="remoteVideo"></video>
+          </div>
+          <div class="logo"></div>
+          <div class="spinner"></div>
+          <div class="watermark"></div>
+          <div class="gradient"></div>
+          <div class="overlay">
+              <div class="media-info">
+                  <div class="media-artwork"></div>
+                  <div class="media-text">
+                      <div class="media-title"></div>
+                      <div class="media-subtitle"></div>
+                  </div>
+              </div>
+              <div class="preview-mode-info">
+                  <div class="preview-mode-artwork"></div>
+                  <div class="preview-mode-text">
+  	                <div class="preview-mode-timer">
+                          <div class="preview-mode-timer-starts">Up next in&nbsp;</div>
+                          <div class="preview-mode-timer-countdown"></div>
+                          <div class="preview-mode-timer-sec">&nbsp;secs...</div>
+                      </div>
+                      <div class="preview-mode-title"></div>
+                      <div class="preview-mode-subtitle"></div>
+                  </div>
+              </div>
+              <div class="controls">
+                  <span class="controls-play-pause"></span>
+                  <span class="controls-cur-time"></span>
+                  <span class="controls-total-time"></span>
+                  <div class="controls-progress">
+                      <div class="controls-progress-inner progressBar"></div>
+                      <div class="controls-progress-thumb"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
 
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-  <!--<script src="../../../js/common.js"></script>-->
   <script src="js/main.js"></script>
-
-  <!--<script src="../../../js/lib/ga.js"></script>-->
 </body>
 </html>
