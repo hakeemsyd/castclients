@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
             public void onAddStream(MediaStream mediaStream) {
                 Log.d(TAG, "onAddStream: " + mediaStream.toString());
                 super.onAddStream(mediaStream);
-                super.onAddStream(mediaStream);
                 gotRemoteStream(mediaStream);
             }
         });
