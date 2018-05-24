@@ -8,41 +8,20 @@
 -->
 <html>
 <head>
-
-  <meta charset="utf-8">
-  <meta name="description" content="WebRTC code samples">
-  <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
-  <meta itemprop="description" content="Client-side WebRTC code samples">
-  <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png">
-  <meta itemprop="name" content="WebRTC code samples">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta id="theme-color" name="theme-color" content="#ffffff">
-
-  <base target="_blank">
-
-  <title>Chromecast RTC Cast Client</title>
-
-  <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
-  <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="../../../css/main.css" />
-  <link rel="stylesheet" href="css/main.css" />
-
+  <!-- Change the title tag to your app's name to display as the details text on the Cast device picker -->
+  <title>Casting app name</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/player.css" />
+  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+  <!--<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>-->
+  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
 </head>
-
 <body>
-
-  <div id="container">
-
-    <h1><a title="Casting">Local Casting Demo</a>
-    <video id="remoteVideo" autoplay></video>
-  </div>
-
+  <body style="margin: 0">
+  <video id="remoteVideo" autoplay></video>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-  <!--<script src="../../../js/common.js"></script>-->
   <script src="js/main.js"></script>
-
-  <!--<script src="../../../js/lib/ga.js"></script>-->
 </body>
 </html>

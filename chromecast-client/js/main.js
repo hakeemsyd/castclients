@@ -10,7 +10,9 @@ var offerAnswerOptions = {
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 
-var socket = io.connect('http://192.168.1.4:8889');
+var socket = io.connect('http://192.168.1.2:8889');
+cast.framework.CastReceiverContext.getInstance().start();
+
 socket.on('connect', function(data) {
   socket.emit('onwebpeerconnected', {msg: 'Chromecast Client'});
 });
@@ -88,6 +90,8 @@ function getName(pc) {
 function gotStream(stream) {
   console.log('Received local stream');
   remoteVideo.srcObject = stream;
+  remoteVideo.load()
+  remoteVideo.play()
   remoteStream = stream;
   callButton.disabled = false;
 }
