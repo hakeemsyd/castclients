@@ -89,8 +89,6 @@ function getName(pc) {
 function gotStream(stream) {
   console.log('Received local stream');
   remoteVideo.srcObject = stream;
-  remoteVideo.load()
-  remoteVideo.play()
   remoteStream = stream;
   callButton.disabled = false;
 }
