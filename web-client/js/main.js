@@ -10,7 +10,7 @@ var offerAnswerOptions = {
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 
-var socket = io.connect('http://localhost:8889');
+var socket = io.connect('https://cast-server.herokuapp.com/');
 socket.on('connect', function(data) {
   socket.emit('onwebpeerconnected', {msg: 'Web client'});
 });
