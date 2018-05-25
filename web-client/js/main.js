@@ -7,41 +7,23 @@ var offerAnswerOptions = {
   offerToReceiveVideo: 1
 };
 
+/*
+signal endpoints
+1. https://cast-server.herokuapp.com/
+2. https://cast-server-calebmer.herokuapp.com/;
+3. https://cast-server-alexkom.herokuapp.com/
+*/
+
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
-
-var socket = io.connect('https://cast-server.herokuapp.com/');
-socket.on('connect', function(data) {
-  socket.emit('onwebpeerconnected', {msg: 'Web client'});
-});
-
-socket.on('offer', function(data) {
-  reset();
-  console.log(data);
-  hanleOfferFromRemote({sdp: data.sdp, type: 'offer'});
-});
-
-socket.on('setice', function(data) {
-  if (peerConnection == null) {
-    return;
-  }
-
-  var ice = JSON.parse(data)
-  console.log('Remote Peer Ice Candidates: ' + ice.candidate);
-  peerConnection.addIceCandidate(ice)
-    .then(
-      function() {
-        onAddIceCandidateSuccess(peerConnection);
-      },
-      function(err) {
-        onAddIceCandidateError(peerConnection, err);
-      }
-    );
-});
+var server_select = document.getElementById('server_select');
+var connectButton = document.getElementById('connect');
+server_select.onchange = connect;
+var socket = null;
+connect(server_select.options[server_select.selectedIndex].innerText);
 
 function onIceCandidate(pc, event) {
-  //var str = JSON.stringify(event.candidate);
-  if (/*str.includes('192.168.1.3') &&*/ peerConnection != undefined && event.candidate) {
+  if (peerConnection != undefined && event.candidate) {
     console.log("peerConnection has iceservers" + JSON.stringify(event.candidate));
     var res = peerConnection.localDescription
     if (!answerSent) {
@@ -56,13 +38,6 @@ function onIceCandidate(pc, event) {
   console.log(getName(pc) + ' ICE candidate: \n' + (event.candidate ?
       event.candidate.candidate : '(null)'));
 }
-
-socket.on('disconnect', function() {
-  if(peerConnection != null) {
-    peerConnection.close();
-    reset();
-  }
-});
 
 remoteVideo.addEventListener('loadedmetadata', function() {
   console.log('Remote video videoWidth: ' + this.videoWidth +
@@ -164,8 +139,70 @@ function onIceStateChange(pc, event) {
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
+function connect() {
+  reset();
+  var url = server_select.options[server_select.selectedIndex].innerText;
+  console.log('reconnecting to ' + url);
+  if (socket != null) {
+    setDisconnectedStatus();
+    socket.destroy();
+  }
+  socket = io.connect(url);
+
+
+  socket.on('connect', function(data) {
+    socket.emit('onwebpeerconnected', {msg: 'Web client'});
+    setConnectedStatus(url);
+  });
+
+  socket.on('offer', function(data) {
+    reset();
+    console.log(data);
+    hanleOfferFromRemote({sdp: data.sdp, type: 'offer'});
+  });
+
+  socket.on('setice', function(data) {
+    if (peerConnection == null) {
+      return;
+    }
+
+    var ice = JSON.parse(data)
+    console.log('Remote Peer Ice Candidates: ' + ice.candidate);
+    peerConnection.addIceCandidate(ice)
+      .then(
+        function() {
+          onAddIceCandidateSuccess(peerConnection);
+        },
+        function(err) {
+          onAddIceCandidateError(peerConnection, err);
+        }
+      );
+  });
+
+  socket.on('disconnect', function() {
+    if(peerConnection != null) {
+      peerConnection.close();
+      reset();
+    }
+  });
+}
+
+function setConnectedStatus(url) {
+  console.log('Connected to socket at: ' + url);
+  var s = document.getElementById("status_msg");
+  s.innerHTML = 'Connected : ' + url;
+  s.style.color = 'green';
+}
+
+function setDisconnectedStatus() {
+  console.log('Socket disconnected');
+  var s = document.getElementById("status_msg");
+  s.innerHTML = 'Disconnected';
+  s.style.color = 'red';
+}
+
 function reset() {
-  console.log('Ending call');
+  console.log('Reset state !');
   if (peerConnection != null) {
     peerConnection.close();
   }

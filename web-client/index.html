@@ -33,7 +33,20 @@
 
   <div id="container">
 
-    <h1><a title="Casting">Local Casting Demo</a>
+    <h1><a title="Casting">Local Casting Demo</a></h1>
+    <div>
+      <label> Signal Server:</label> <!--<input type="text" id="server_url">
+      <button id="connect">connect</button>-->
+      <select id='server_select'>
+          <option value="local">http://localhost:8889</option>
+          <option value="serv1">https://cast-server.herokuapp.com/</option>
+          <option value="serv2">https://cast-server-calebmer.herokuapp.com/</option>
+          <option value="serv3">https://cast-server-alexkom.herokuapp.com/</option>
+      </select>
+    </div>
+    <div>
+      <label id="status_msg">Disconnected</label>
+    </div>
     <video id="remoteVideo" autoplay></video>
   </div>
 
