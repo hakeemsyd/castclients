@@ -4,12 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.1"
+        android:background="@color/red" />
+
+
     <org.webrtc.SurfaceViewRenderer
         android:id="@+id/remote_gl_surface_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="512dp"
+        android:layout_height="512dp"
         android:layout_weight="0.7"
         android:visibility="visible" />
+
+    <Spinner
+        android:id="@+id/servers_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
 
     <Button
         android:id="@+id/btn_connect"

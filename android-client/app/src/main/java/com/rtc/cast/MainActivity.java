@@ -7,7 +7,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 
@@ -38,14 +42,6 @@ import io.socket.emitter.Emitter;
 public class MainActivity extends AppCompatActivity {
 
     private Socket mSocket;
-
-    {
-        try {
-            mSocket = IO.socket("https://cast-server.herokuapp.com/");
-        } catch (URISyntaxException e) {
-            Log.e(TAG, "Exception on connection: " + e.getMessage());
-        }
-    }
 
     private Emitter.Listener mOnNewMessage = new Emitter.Listener() {
         @Override
@@ -105,6 +101,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private AdapterView.OnItemSelectedListener mServerUrlSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                disconnect();
+                mCurrentUrl = parent.getItemAtPosition(position).toString();
+                connect();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            disconnect();
+            connect();
+        }
+    };
+
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean HW_ACCELERATION_ENABLED = true;
     private PeerConnection mPeerConnection;
@@ -112,8 +123,11 @@ public class MainActivity extends AppCompatActivity {
     private String mRemoteSdp;
     private Button mConnectButton;
     private EglBase mRootEglBase;
+    private TextView mConnectionStatus;
     private org.webrtc.SurfaceViewRenderer mRemoteVideoView;
+    private Spinner mServerUrlsSpinner;
     private List<PeerConnection.IceServer> mRemoteIceServers;
+    private String mCurrentUrl;
     private MenuItem mediaRouteMenuItem;
 
     @Override
@@ -124,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         initVideos();
         initRtc();
-        mSocket.connect();
-        mSocket.on("offer", mOnSdpOffer);
-        mSocket.on("setice", mOnRemoteIceCandidate);
     }
 
     @Override
@@ -164,6 +175,15 @@ public class MainActivity extends AppCompatActivity {
         mRemoteVideoView = (SurfaceViewRenderer) findViewById(R.id.remote_gl_surface_view);
         mConnectButton = (Button) findViewById(R.id.btn_connect);
         mConnectButton.setOnClickListener(mConnectButtonClickListener);
+        mConnectionStatus = (TextView) findViewById(R.id.status_text);
+
+        mServerUrlsSpinner = (Spinner) findViewById(R.id.servers_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.server_urls, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mServerUrlsSpinner.setAdapter(adapter);
+        mServerUrlsSpinner.setOnItemSelectedListener(mServerUrlSelectedListener);
     }
 
 
@@ -250,12 +270,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mSocket.disconnect();
-        mPeerConnection.close();
-        mPeerConnection = null;
-        mSocket.off("new message", mOnNewMessage);
+    protected void onResume() {
+        super.onResume();
+        connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        disconnect();
     }
 
     private void sendAnswer() {
@@ -281,5 +304,43 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void connect() {
+        try {
+            String url = mCurrentUrl == null ? getString(R.string.default_server) : mCurrentUrl;
+            mSocket = IO.socket(url);
+            mSocket.connect();
+            mSocket.on("offer", mOnSdpOffer);
+            mSocket.on("setice", mOnRemoteIceCandidate);
+            setStatusConnected(url);
+        } catch (URISyntaxException e) {
+            Log.e(TAG, "Exception on connection: " + e.getMessage());
+            setStatusDisconnected();
+        }
+    }
+
+    private void disconnect() {
+        setStatusDisconnected();
+
+        if(mSocket!= null) {
+            mSocket.disconnect();
+            mSocket = null;
+        }
+
+        if(mPeerConnection != null) {
+            mPeerConnection.close();
+            mPeerConnection = null;
+        }
+    }
+
+    private void setStatusConnected(String url) {
+        mConnectionStatus.setText("Connected to : " + url);
+        mConnectionStatus.setBackgroundColor(getResources().getColor(R.color.green));
+    }
+
+    private void setStatusDisconnected() {
+        mConnectionStatus.setText("Disconnected!");
+        mConnectionStatus.setBackgroundColor(getResources().getColor(R.color.red));
     }
 }

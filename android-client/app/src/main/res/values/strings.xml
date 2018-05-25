@@ -2,4 +2,11 @@
     <string name="app_name">android-client</string>
     <string name="media_route_menu_title">Casting Client</string>
     <string name="action_settings">Setting</string>
+    <string name="default_server">http://localhost:8889/</string>
+    <string-array name="server_urls">
+        <item>http://localhost:8889/</item>
+        <item>https://cast-server.herokuapp.com/</item>
+        <item>https://cast-server-calebmer.herokuapp.com/</item>
+        <item>https://cast-server-alexkom.herokuapp.com/</item>
+    </string-array>
 </resources>
