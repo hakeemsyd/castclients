@@ -41,9 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     {
         try {
-            mSocket = IO.socket("http://192.168.1.4:8889"); // Mifi device
-            // mSocket = IO.socket("http://192.168.1.3:8889"); // outdated Mifi device
-            //mSocket = IO.socket("http://192.168.1.5:8889"); // home wifi (how
+            mSocket = IO.socket("https://cast-server.herokuapp.com/");
         } catch (URISyntaxException e) {
             Log.e(TAG, "Exception on connection: " + e.getMessage());
         }
