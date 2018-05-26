@@ -6,9 +6,10 @@ label {
   color: #808080;
 }
 
-#page_title{
+p#page_title{
   color: #808080;
-  padding-left: 47%;
+  padding-top: 20%;
+  padding-left: 45%;
   font-size: 75px;
   font-family: Roboto;
 }
