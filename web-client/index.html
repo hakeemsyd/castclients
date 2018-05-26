@@ -29,11 +29,8 @@
 </head>
 
 <body>
-
   <div id="container">
-
-    <!--<h1><a title="Casting">Local Casting Demo</a></h1>-->
-    <div>
+    <div id='server_select_block'>
       <label>Signal Server:</label>
       <select id='server_select'>
           <option value="serv0">http://localhost:8889</option>
@@ -41,10 +38,9 @@
           <option value="serv2">https://cast-server-calebmer.herokuapp.com/</option>
           <option value="serv3">https://cast-server-alexkom.herokuapp.com/</option>
       </select>
-    </div>
-    <div>
       <label id="status_msg" color="red">Disconnected</label>
     </div>
+    <label id="page_title">Oculus</label>
     <video id="remoteVideo" autoplay></video>
   </div>
 
