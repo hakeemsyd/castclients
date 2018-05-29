@@ -75,7 +75,13 @@ function onCreateSessionDescriptionError(error) {
 function hanleOfferFromRemote(desc) {
   console.log('LS offer\n' + desc.sdp);
   var servers = null;
-  peerConnection = new RTCPeerConnection(servers);
+  var options = {
+    optional: [
+        {DtlsSrtpKeyAgreement: false}
+    ]
+  }
+
+  peerConnection = new RTCPeerConnection(servers, options);
   console.log('Created remote peer connection object peerConnection');
   peerConnection.onicecandidate = function(e) {
     onIceCandidate(peerConnection, e);

@@ -37,6 +37,7 @@ import java.util.List;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import org.webrtc.Logging;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -150,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initRtc() {
-
+        // TODO: Figure out how to enable logging, the following crashes.
+        // Logging.enableLogToDebugOutput(Logging.Severity.LS_WARNING);
         PeerConnectionFactory.InitializationOptions initializationOptions =
                 PeerConnectionFactory.InitializationOptions.builder(this)
                         .setEnableVideoHwAcceleration(HW_ACCELERATION_ENABLED)
@@ -203,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
         rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
         rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE;
         rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
+        rtcConfig.enableDtlsSrtp = false;
         // Use ECDSA encryption.
         rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
         mPeerConnection = mPeerConnectionFactory.createPeerConnection(rtcConfig, new ConnectionObserver("LocalPeerConnection") {
