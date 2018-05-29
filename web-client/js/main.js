@@ -143,6 +143,10 @@ function onAddIceCandidateError(pc, error) {
 }
 
 function onIceStateChange(pc, event) {
+    if(pc == null || pc == undefined) {
+      return;
+    }
+
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
