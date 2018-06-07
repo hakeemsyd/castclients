@@ -7,13 +7,6 @@ var offerAnswerOptions = {
   offerToReceiveVideo: 1
 };
 
-/*
-signal endpoints
-1. https://cast-server.herokuapp.com/
-2. https://cast-server-calebmer.herokuapp.com/;
-3. https://cast-server-alexkom.herokuapp.com/
-*/
-
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var server_select = document.getElementById('server_select');
@@ -28,7 +21,7 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.emit('answer', {sdp: res.sdp});
+      socket.send(JSON.stringify({type: 2, payload: res.sdp}));
       answerSent = true;
     }
 
@@ -156,46 +149,39 @@ function connect() {
   console.log('reconnecting to ' + url);
   if (socket != null) {
     setDisconnectedStatus();
-    socket.destroy();
+    socket.close();
   }
-  socket = io.connect(url);
+  socket = new WebSocket(url);
 
-
-  socket.on('connect', function(data) {
-    socket.emit('onwebpeerconnected', {msg: 'Web client'});
+  socket.onopen = function(event) {
     setConnectedStatus(url);
-  });
+    var startMsg = {
+      type: 0,
+      payload: 'Hello from web client'
+    };
+    socket.send(JSON.stringify(startMsg));
+  };
 
-  socket.on('offer', function(data) {
-    reset();
-    console.log(data);
-    hanleOfferFromRemote({sdp: data.sdp, type: 'offer'});
-  });
+  socket.onmessage = function (event) {
+    console.log(event.data);
+    var msg = JSON.parse(event.data);
 
-  socket.on('setice', function(data) {
-    if (peerConnection == null) {
-      return;
+    switch(msg.type) {
+      case 0:
+        break;
+      case 1:
+          hanleOfferFromRemote({sdp: msg.payload, type: 'offer'});
+        break;
+      case 2:
+        break;
+      default:
+        break;
     }
+  }
 
-    var ice = JSON.parse(data)
-    console.log('Remote Peer Ice Candidates: ' + ice.candidate);
-    peerConnection.addIceCandidate(ice)
-      .then(
-        function() {
-          onAddIceCandidateSuccess(peerConnection);
-        },
-        function(err) {
-          onAddIceCandidateError(peerConnection, err);
-        }
-      );
-  });
-
-  socket.on('disconnect', function() {
-    if(peerConnection != null) {
-      peerConnection.close();
-      reset();
-    }
-  });
+  socket.onclose = function(event) {
+    setDisconnectedStatus();
+  }
 }
 
 function setConnectedStatus(url) {
