@@ -32,12 +32,15 @@
   <div id="container">
     <div id='server_select_block'>
       <label>Signal Server:</label>
-      <select id='server_select'>
+      <input id='server_url_text' name="textfield" type="text" placeholder='ws://ipaddress:8889/'/>
+      <button id='connect_btn'>Connect</button>
+      <!--<select id='server_select'>
           <option value="serv0">ws://192.168.1.50.:8889</option>
+          <option value="serv0">ws://100.96.231.114:8889</option>
           <option value="serv1">https://cast-server.herokuapp.com/</option>
           <option value="serv2">https://cast-server-calebmer.herokuapp.com/</option>
           <option value="serv3">https://cast-server-alexkom.herokuapp.com/</option>
-      </select>
+      </select>-->
       <label id="status_msg" color="red">Disconnected</label>
     </div>
     <p id="page_title">Oculus</p>

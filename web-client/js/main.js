@@ -9,11 +9,11 @@ var offerAnswerOptions = {
 
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
-var server_select = document.getElementById('server_select');
+var server_url = document.getElementById('server_url_text');
+var connect_btn = document.getElementById('connect_btn');
 var connectButton = document.getElementById('connect');
-server_select.onchange = connect;
+// server_select.onchange = connect;
 var socket = null;
-connect(server_select.options[server_select.selectedIndex].innerText);
 
 function onIceCandidate(pc, event) {
   if (peerConnection != undefined && event.candidate) {
@@ -145,7 +145,12 @@ function onIceStateChange(pc, event) {
 
 function connect() {
   reset();
-  var url = server_select.options[server_select.selectedIndex].innerText;
+  var url = server_url.value; // server_select.options[server_select.selectedIndex].innerText;
+  if (url == undefined || url == "") {
+    setDisconnectedStatus();
+    return;
+  }
+
   console.log('reconnecting to ' + url);
   if (socket != null) {
     setDisconnectedStatus();
@@ -182,6 +187,10 @@ function connect() {
   socket.onclose = function(event) {
     setDisconnectedStatus();
   }
+}
+
+connect_btn.onclick = function(event) {
+  connect();
 }
 
 function setConnectedStatus(url) {
