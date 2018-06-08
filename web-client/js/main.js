@@ -21,7 +21,7 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.send(JSON.stringify({type: 2, payload: res.sdp}));
+      socket.send(JSON.stringify({type: 2, data: res.sdp}));
       answerSent = true;
     }
 
@@ -162,7 +162,7 @@ function connect() {
     setConnectedStatus(url);
     var startMsg = {
       type: 0,
-      payload: 'Hello from web client'
+      data: 'Web Client',
     };
     socket.send(JSON.stringify(startMsg));
   };
@@ -175,7 +175,7 @@ function connect() {
       case 0:
         break;
       case 1:
-          hanleOfferFromRemote({sdp: msg.payload, type: 'offer'});
+          hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
         break;
       case 2:
         break;
