@@ -10,7 +10,9 @@ var offerAnswerOptions = {
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var server_url = document.getElementById('server_url_text');
+var sessionId = document.getElementById('sessionId');
 var connect_btn = document.getElementById('connect_btn');
+var disconnect_btn = document.getElementById('disconnect_btn');
 var connectButton = document.getElementById('connect');
 // server_select.onchange = connect;
 var socket = null;
@@ -21,7 +23,8 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.send(JSON.stringify({type: 2, data: res.sdp}));
+      socket.send(JSON.stringify({sessionId: sessionId.value, type: 2, data: res.sdp}));
+      // socket.close();
       answerSent = true;
     }
 
@@ -154,13 +157,14 @@ function connect() {
   console.log('reconnecting to ' + url);
   if (socket != null) {
     setDisconnectedStatus();
-    socket.close();
+    // socket.close();
   }
   socket = new WebSocket(url);
 
   socket.onopen = function(event) {
     setConnectedStatus(url);
     var startMsg = {
+      sessionId: sessionId.value,
       type: 0,
       data: 'Web Client',
     };
@@ -193,6 +197,10 @@ connect_btn.onclick = function(event) {
   connect();
 }
 
+disconnect_btn.onclick = function(event) {
+  reset();
+}
+
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
   var s = document.getElementById("status_msg");
@@ -209,6 +217,9 @@ function setDisconnectedStatus() {
 
 function reset() {
   console.log('Reset state !');
+  if (socket != null) {
+    socket.send(JSON.stringify({sessionId: sessionId.value, type: 3, data: ""}));
+  }
   if (peerConnection != null) {
     peerConnection.close();
   }
