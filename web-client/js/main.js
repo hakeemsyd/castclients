@@ -15,6 +15,12 @@ var connect_btn = document.getElementById('connect_btn');
 var disconnect_btn = document.getElementById('disconnect_btn');
 var connectButton = document.getElementById('connect');
 // server_select.onchange = connect;
+setInterval(function () {
+       if (socket != null && socket.readyState == 1) {
+            console.log('keep socket alive request')
+            socket.send("ping")
+        }
+}, 4000);
 var socket = null;
 
 function onIceCandidate(pc, event) {
@@ -217,9 +223,10 @@ function setDisconnectedStatus() {
 
 function reset() {
   console.log('Reset state !');
-  if (socket != null) {
+  if (socket != null && socket.readyState == 1) {
     socket.send(JSON.stringify({sessionId: sessionId.value, type: 3, data: ""}));
   }
+
   if (peerConnection != null) {
     peerConnection.close();
   }
