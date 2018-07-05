@@ -7,7 +7,7 @@ var offerAnswerOptions = {
   offerToReceiveVideo: 1
 };
 
-const CHROMECAST_SENDER_URL = "was://192.168.1.50:8889";
+const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889";
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var server_url = ""; //document.getElementById('server_url_text');
