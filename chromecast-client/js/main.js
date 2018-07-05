@@ -154,7 +154,7 @@ function onIceStateChange(pc, event) {
 
 function connect() {
   reset();
-  url = CHROMECAST_SENDER_URL;
+  var url = CHROMECAST_SENDER_URL;
 
   console.log('reconnecting to ' + url);
   if (socket != null) {
