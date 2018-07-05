@@ -10,11 +10,10 @@ var offerAnswerOptions = {
 const CHROMECAST_SENDER_URL = "was://192.168.1.50:8889";
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
-var server_url = document.getElementById('server_url_text');
-var sessionId = document.getElementById('sessionId');
-var connect_btn = document.getElementById('connect_btn');
-var disconnect_btn = document.getElementById('disconnect_btn');
-var connectButton = document.getElementById('connect');
+var server_url = ""; //document.getElementById('server_url_text');
+var sessionId = ""; // document.getElementById('sessionId');
+var connect_btn = null; // document.getElementById('connect_btn');
+var disconnect_btn = null;// document.getElementById('disconnect_btn');
 connect();
 setInterval(function () {
        if (socket != null && socket.readyState == 1) {
@@ -30,7 +29,7 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.send(JSON.stringify({sessionId: sessionId.value, type: 2, data: res.sdp}));
+      socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
       // socket.close();
       answerSent = true;
     }
@@ -155,10 +154,7 @@ function onIceStateChange(pc, event) {
 
 function connect() {
   reset();
-  var url = server_url.value; // server_select.options[server_select.selectedIndex].innerText;
-  if (url == undefined || url == "") {
-    url = CHROMECAST_SENDER_URL;
-  }
+  url = CHROMECAST_SENDER_URL;
 
   console.log('reconnecting to ' + url);
   if (socket != null) {
@@ -170,7 +166,7 @@ function connect() {
   socket.onopen = function(event) {
     setConnectedStatus(url);
     var startMsg = {
-      sessionId: sessionId.value,
+      sessionId: sessionId,
       type: 0,
       data: 'Web Client',
     };
@@ -199,13 +195,13 @@ function connect() {
   }
 }
 
-connect_btn.onclick = function(event) {
+/*connect_btn.onclick = function(event) {
   connect();
 }
 
 disconnect_btn.onclick = function(event) {
   reset();
-}
+}*/
 
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
@@ -224,7 +220,7 @@ function setDisconnectedStatus() {
 function reset() {
   console.log('Reset state !');
   if (socket != null && socket.readyState == 1) {
-    socket.send(JSON.stringify({sessionId: sessionId.value, type: 3, data: ""}));
+    socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
   }
 
   if (peerConnection != null) {
