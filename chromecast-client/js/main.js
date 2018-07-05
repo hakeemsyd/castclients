@@ -205,16 +205,16 @@ disconnect_btn.onclick = function(event) {
 
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
-  var s = document.getElementById("status_msg");
+  /*var s = document.getElementById("status_msg");
   s.innerHTML = 'Connected : ' + url;
-  s.style.color = 'green';
+  s.style.color = 'green';*/
 }
 
 function setDisconnectedStatus() {
   console.log('Socket disconnected');
-  var s = document.getElementById("status_msg");
+  /*var s = document.getElementById("status_msg");
   s.innerHTML = 'Disconnected';
-  s.style.color = 'red';
+  s.style.color = 'red';*/
 }
 
 function reset() {
