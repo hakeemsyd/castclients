@@ -14,7 +14,6 @@ var server_url = ""; //document.getElementById('server_url_text');
 var sessionId = ""; // document.getElementById('sessionId');
 var connect_btn = null; // document.getElementById('connect_btn');
 var disconnect_btn = null;// document.getElementById('disconnect_btn');
-connect();
 setInterval(function () {
        if (socket != null && socket.readyState == 1) {
             console.log('keep socket alive request')
@@ -22,6 +21,7 @@ setInterval(function () {
         }
 }, 4000);
 var socket = null;
+connect();
 
 function onIceCandidate(pc, event) {
   if (peerConnection != undefined && event.candidate) {
