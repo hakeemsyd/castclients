@@ -7,47 +7,31 @@ var offerAnswerOptions = {
   offerToReceiveVideo: 1
 };
 
+const CHROMECAST_SENDER_URL = "was://192.168.1.50:8889";
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
-
-var socket = io.connect('https://cast-server.herokuapp.com');
-
-socket.on('connect', function(data) {
-  socket.emit('onwebpeerconnected', {msg: 'Chromecast Client'});
-});
-
-socket.on('offer', function(data) {
-  reset();
-  console.log(data);
-  hanleOfferFromRemote({sdp: data.sdp, type: 'offer'});
-});
-
-socket.on('setice', function(data) {
-  if (peerConnection == null) {
-    return;
-  }
-
-  var ice = JSON.parse(data)
-  console.log('Remote Peer Ice Candidates: ' + ice.candidate);
-  peerConnection.addIceCandidate(ice)
-    .then(
-      function() {
-        onAddIceCandidateSuccess(peerConnection);
-      },
-      function(err) {
-        onAddIceCandidateError(peerConnection, err);
-      }
-    );
-});
+var server_url = document.getElementById('server_url_text');
+var sessionId = document.getElementById('sessionId');
+var connect_btn = document.getElementById('connect_btn');
+var disconnect_btn = document.getElementById('disconnect_btn');
+var connectButton = document.getElementById('connect');
+connect();
+setInterval(function () {
+       if (socket != null && socket.readyState == 1) {
+            console.log('keep socket alive request')
+            socket.send("ping")
+        }
+}, 4000);
+var socket = null;
 
 function onIceCandidate(pc, event) {
-  //var str = JSON.stringify(event.candidate);
-  if (/*str.includes('192.168.1.3') &&*/ peerConnection != undefined && event.candidate) {
+  if (peerConnection != undefined && event.candidate) {
     console.log("peerConnection has iceservers" + JSON.stringify(event.candidate));
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.emit('answer', {sdp: res.sdp});
+      socket.send(JSON.stringify({sessionId: sessionId.value, type: 2, data: res.sdp}));
+      // socket.close();
       answerSent = true;
     }
 
@@ -57,13 +41,6 @@ function onIceCandidate(pc, event) {
   console.log(getName(pc) + ' ICE candidate: \n' + (event.candidate ?
       event.candidate.candidate : '(null)'));
 }
-
-socket.on('disconnect', function() {
-  if(peerConnection != null) {
-    peerConnection.close();
-    reset();
-  }
-});
 
 remoteVideo.addEventListener('loadedmetadata', function() {
   console.log('Remote video videoWidth: ' + this.videoWidth +
@@ -105,7 +82,8 @@ function hanleOfferFromRemote(desc) {
     optional: [
         {DtlsSrtpKeyAgreement: false}
     ]
-  };
+  }
+
   peerConnection = new RTCPeerConnection(servers, options);
   console.log('Created remote peer connection object peerConnection');
   peerConnection.onicecandidate = function(e) {
@@ -168,11 +146,87 @@ function onAddIceCandidateError(pc, error) {
 }
 
 function onIceStateChange(pc, event) {
+    if(pc == null || pc == undefined) {
+      return;
+    }
+
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
+function connect() {
+  reset();
+  var url = server_url.value; // server_select.options[server_select.selectedIndex].innerText;
+  if (url == undefined || url == "") {
+    url = CHROMECAST_SENDER_URL;
+  }
+
+  console.log('reconnecting to ' + url);
+  if (socket != null) {
+    setDisconnectedStatus();
+    // socket.close();
+  }
+  socket = new WebSocket(url);
+
+  socket.onopen = function(event) {
+    setConnectedStatus(url);
+    var startMsg = {
+      sessionId: sessionId.value,
+      type: 0,
+      data: 'Web Client',
+    };
+    socket.send(JSON.stringify(startMsg));
+  };
+
+  socket.onmessage = function (event) {
+    console.log(event.data);
+    var msg = JSON.parse(event.data);
+
+    switch(msg.type) {
+      case 0:
+        break;
+      case 1:
+          hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
+        break;
+      case 2:
+        break;
+      default:
+        break;
+    }
+  }
+
+  socket.onclose = function(event) {
+    setDisconnectedStatus();
+  }
+}
+
+connect_btn.onclick = function(event) {
+  connect();
+}
+
+disconnect_btn.onclick = function(event) {
+  reset();
+}
+
+function setConnectedStatus(url) {
+  console.log('Connected to socket at: ' + url);
+  var s = document.getElementById("status_msg");
+  s.innerHTML = 'Connected : ' + url;
+  s.style.color = 'green';
+}
+
+function setDisconnectedStatus() {
+  console.log('Socket disconnected');
+  var s = document.getElementById("status_msg");
+  s.innerHTML = 'Disconnected';
+  s.style.color = 'red';
+}
+
 function reset() {
-  console.log('Ending call');
+  console.log('Reset state !');
+  if (socket != null && socket.readyState == 1) {
+    socket.send(JSON.stringify({sessionId: sessionId.value, type: 3, data: ""}));
+  }
+
   if (peerConnection != null) {
     peerConnection.close();
   }
