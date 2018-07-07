@@ -50,7 +50,7 @@ remoteVideo.addEventListener('loadedmetadata', function() {
 remoteVideo.onresize = function() {
   console.log('Remote video size changed to ' +
     remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
-  document.getElementById('page_title').style.visibility = 'hidden';
+  // document.getElementById('page_title').style.visibility = 'hidden';
   // We'll use the first onsize callback as an indication that video has started
   // playing out.
   if (startTime) {
@@ -229,4 +229,5 @@ function reset() {
   }
   peerConnection = null;
   answerSent = false;
+  // document.getElementById('page_title').style.visibility = 'visible';
 }
