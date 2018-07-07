@@ -40,7 +40,7 @@
         window.close();
       }
     }
-    window.mediaElement.getElementById('remoteVideo').addEventListener('loadedmetadata', function() {
+    window.mediaElement.addEventListener('loadedmetadata', function() {
       if (video.buffered.length === 0) return;
 
       var bufferedSeconds = video.buffered.end(0) - video.buffered.start(0);
