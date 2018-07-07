@@ -17,7 +17,7 @@ var connect_btn = null; // document.getElementById('connect_btn');
 var disconnect_btn = null;// document.getElementById('disconnect_btn');
 setInterval(function () {
        if (socket != null && socket.readyState == 1) {
-            console.log('keep socket alive request')
+            // console.log('keep socket alive request')
             socket.send("ping")
         }
 }, 4000);
