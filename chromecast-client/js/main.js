@@ -229,5 +229,4 @@ function reset() {
   }
   peerConnection = null;
   answerSent = false;
-  document.getElementById('page_title').style.visibility = 'visible';
 }
