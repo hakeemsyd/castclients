@@ -47,6 +47,10 @@ remoteVideo.addEventListener('loadedmetadata', function() {
     'px,  videoHeight: ' + this.videoHeight + 'px');
 });
 
+remoteVideo.addEventListener('progress', function() {
+  console.log('Buffered: ' + remoteVideo.buffered.length);
+});
+
 remoteVideo.onresize = function() {
   console.log('Remote video size changed to ' +
     remoteVideo.videoWidth + 'x' + remoteVideo.videoHeight);
