@@ -3,7 +3,7 @@
 var peerConnection = null;
 var answerSent = false;
 var offerAnswerOptions = {
-  offerToReceiveAudio: 1,
+  offerToReceiveAudio: 0,
   offerToReceiveVideo: 1
 };
 
@@ -50,7 +50,7 @@ remoteVideo.addEventListener('loadedmetadata', function() {
 });
 
 remoteVideo.addEventListener('progress', function() {
-  console.log('Buffered: ' + remoteVideo.buffered.length);
+  //console.log('Buffered: ' + remoteVideo.buffered.length);
 });
 
 remoteVideo.onresize = function() {
