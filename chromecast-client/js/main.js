@@ -86,7 +86,7 @@ function hanleOfferFromRemote(desc) {
   var servers = null;
   var options = {
     optional: [
-        {DtlsSrtpKeyAgreement: false}
+        {DtlsSrtpKeyAgreement: true}
     ]
   }
 
