@@ -86,7 +86,7 @@ function hanleOfferFromRemote(desc) {
   var servers = null;
   var options = {
     optional: [
-        {DtlsSrtpKeyAgreement: true}
+        {DtlsSrtpKeyAgreement: false}
     ]
   }
 
@@ -107,7 +107,7 @@ function hanleOfferFromRemote(desc) {
     onSetSessionDescriptionError
   );
   console.log('Static answer set');
-  peerConnection.createAnswer().then(
+  peerConnection.createAnswer(offerAnswerOptions).then(
     onCreateAnswerSuccess,
     onCreateSessionDescriptionError
   );
