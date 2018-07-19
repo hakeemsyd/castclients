@@ -1,42 +1,10 @@
 body {
   background: black;
 }
-
-label {
-  color: #808080;
-}
-
-p#page_title{
-  color: #808080;
-  padding-top: 20%;
-  padding-left: 45%;
-  font-size: 75px;
-  font-family: Roboto;
-}
-
-button {
-  margin: 0 20px 0 0;
-  width: 83px;
-}
-
 video {
    position: fixed;
    top: 100%;
    left: 100%;
    min-width: 100%;
    min-height: 100%;
-}
-
-label#status_msg {
-  color: red;
-  padding-left: 20px;
-  font-size: 25px;
-}
-
-select#server_select {
-  font-size: 25px;
-}
-
-div#server_select_block {
-  font-size: 25px;
 }
