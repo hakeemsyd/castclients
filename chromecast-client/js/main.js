@@ -7,9 +7,9 @@ var offerAnswerOptions = {
 };
 
 // const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889";
-const CHROMECAST_SENDER_URL = "ws://192.168.1.3:8889"; // Go Hogwarts
+// const CHROMECAST_SENDER_URL = "ws://192.168.1.3:8889"; // Go Hogwarts
 // const CHROMECAST_SENDER_URL = "ws://192.168.1.37:8889"; // Monterey ATT_Wifi hotspot
-// const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889"; // Go ATT_WIFI
+const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889"; // Go ATT_WIFI
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var server_url = ""; //document.getElementById('server_url_text');
@@ -204,7 +204,7 @@ function connect() {
 /*connect_btn.onclick = function(event) {
   connect();
 }
-
+ds
 disconnect_btn.onclick = function(event) {
   reset();
 }*/
