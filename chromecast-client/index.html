@@ -21,25 +21,10 @@
 </head>
 <body>
   <body style="margin: 0">
-  <cast-media-player id="remoteVideo" autoplay></cast-media-player>
+  <video id="remoteVideo" autoplay></video>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
   <script src="js/main.js"></script>
-  <script>
-    cast.receiver.logger.setLevelValue(cast.receiver.LoggerLevel.DEBUG);
-    window.mediaElement = document.getElementById('remoteVideo');
-    window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
-    window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-    window.castReceiverManager.start();
-
-    window.castReceiverManager.onSenderDisconnected = function(event) {
-      console.log(event);
-    if(window.castReceiverManager.getSenders().length == 0 &&
-      event.reason == cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
-        window.close();
-      }
-    }
-  </script>
 </body>
 </html>

@@ -6,24 +6,37 @@ var offerAnswerOptions = {
   offerToReceiveVideo: 1
 };
 
-// const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889";
-// const CHROMECAST_SENDER_URL = "ws://192.168.1.3:8889"; // Go Hogwarts
-// const CHROMECAST_SENDER_URL = "ws://192.168.1.37:8889"; // Monterey ATT_Wifi hotspot
-const CHROMECAST_SENDER_URL = "ws://192.168.1.50:8889"; // Go ATT_WIFI
+
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
-var server_url = ""; //document.getElementById('server_url_text');
-var sessionId = ""; // document.getElementById('sessionId');
-var connect_btn = null; // document.getElementById('connect_btn');
-var disconnect_btn = null;// document.getElementById('disconnect_btn');
+var sessionId = "";
+init();
+
+function init() {
+  cast.receiver.logger.setLevelValue(cast.receiver.LoggerLevel.DEBUG);
+  window.mediaElement = document.getElementById('remoteVideo');
+  window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
+  window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+  window.castReceiverManager.start();
+
+  window.castReceiverManager.onSenderDisconnected = function(event) {
+    console.log(event);
+  if(window.castReceiverManager.getSenders().length == 0 &&
+    event.reason == cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
+      window.close();
+    }
+  }
+}
+
 setInterval(function () {
        if (socket != null && socket.readyState == 1) {
-            // console.log('keep socket alive request')
+            console.log('keep socket alive request')
             socket.send("ping")
         }
 }, 4000);
+
 var socket = null;
-connect();
+// connect();
 
 function onIceCandidate(pc, event) {
   if (peerConnection != undefined && event.candidate) {
@@ -158,9 +171,10 @@ function onIceStateChange(pc, event) {
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
-function connect() {
+function connect(url, sid) {
   reset();
-  var url = CHROMECAST_SENDER_URL;
+  sessionId = sid;
+  //var url = CHROMECAST_SENDER_URL;
 
   console.log('reconnecting to ' + url);
   if (socket != null) {
@@ -201,26 +215,12 @@ function connect() {
   }
 }
 
-/*connect_btn.onclick = function(event) {
-  connect();
-}
-ds
-disconnect_btn.onclick = function(event) {
-  reset();
-}*/
-
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
-  /*var s = document.getElementById("status_msg");
-  s.innerHTML = 'Connected : ' + url;
-  s.style.color = 'green';*/
 }
 
 function setDisconnectedStatus() {
   console.log('Socket disconnected');
-  /*var s = document.getElementById("status_msg");
-  s.innerHTML = 'Disconnected';
-  s.style.color = 'red';*/
 }
 
 function reset() {
@@ -234,5 +234,4 @@ function reset() {
   }
   peerConnection = null;
   answerSent = false;
-  // document.getElementById('page_title').style.visibility = 'visible';
 }
