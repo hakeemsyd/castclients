@@ -10,6 +10,15 @@ var offerAnswerOptions = {
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
+setInterval(function () {
+       if (socket != null && socket.readyState == 1) {
+            console.log('keep socket alive request')
+            socket.send("ping")
+        }
+}, 4000);
+
+var socket = null;
+
 init();
 
 function init() {
@@ -29,14 +38,6 @@ function init() {
   connect("ws://192.168.1.50:8889", "");
 }
 
-setInterval(function () {
-       if (socket != null && socket.readyState == 1) {
-            console.log('keep socket alive request')
-            socket.send("ping")
-        }
-}, 4000);
-
-var socket = null;
 // connect();
 
 function onIceCandidate(pc, event) {
