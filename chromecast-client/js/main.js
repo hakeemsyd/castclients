@@ -28,6 +28,10 @@ function init() {
   window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
   window.castReceiverManager.start();
 
+  window.castReceiverManager.onSenderConnected = function (event) {
+    console.log(event.data);
+    connect("ws://192.168.1.50:8889", "");
+  }
   window.castReceiverManager.onSenderDisconnected = function(event) {
     console.log(event);
   if(window.castReceiverManager.getSenders().length == 0 &&
@@ -35,7 +39,6 @@ function init() {
       window.close();
     }
   }
-  connect("ws://192.168.1.50:8889", "");
 }
 
 // connect();
