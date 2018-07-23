@@ -26,6 +26,7 @@ function init() {
       window.close();
     }
   }
+  connect("ws://192.168.1.50:8889", "");
 }
 
 setInterval(function () {
