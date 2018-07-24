@@ -10,6 +10,7 @@ var offerAnswerOptions = {
 var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
+var server_url = "";
 setInterval(function () {
        if (socket != null && socket.readyState == 1) {
             console.log('keep socket alive request')
@@ -29,9 +30,11 @@ function init() {
   window.castReceiverManager.start();
 
   window.castReceiverManager.onSenderConnected = function (event) {
-    console.log(event.data);
-    connect("ws://192.168.1.50:8889", "");
+    console.log('onSenderConnected url: ' + event.data);
+    server_url = event.data;
+    connect(server_url, "");
   }
+
   window.castReceiverManager.onSenderDisconnected = function(event) {
     console.log(event);
   if(window.castReceiverManager.getSenders().length == 0 &&
