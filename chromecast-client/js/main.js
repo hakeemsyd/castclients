@@ -32,8 +32,8 @@ function init() {
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    console.log('onLoad: ' + event.data);
-    connect(event.data.contentId, "");
+    console.log(event);
+    connect(event.senderId, "");
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
