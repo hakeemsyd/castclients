@@ -31,30 +31,9 @@ function init() {
   const context = cast.framework.CastReceiverContext.getInstance();
   const playerManager = context.getPlayerManager();
 
-
-  // intercept the LOAD request to be able to read in a contentId and get data
-  playerManager.setMessageInterceptor(
-      cast.framework.messages.MessageType.LOAD, loadRequestData => {
-          if (loadRequestData.media && loadRequestData.media.contentId) {
-              return thirdparty.getMediaById(loadRequestData.media.contentId)
-              .then(media => {
-                if (media) {
-                  loadRequestData.media.contentUrl = media.url;
-                  loadRequestData.media.contentType = media.contentType;
-                  loadRequestData.media.metadata = media.metadata;
-                }
-                return loadRequestData;
-              });
-          }
-          return loadRequestData;
-      });
-
-
-  window.castReceiverManager.onSenderConnected = function (event) {
-    console.log('onSenderConnected url: ' + event.data);
-    server_url = event.data;
-    connect(server_url, "");
-  }
+  cast.receiver.Mediamanager.onLoad = function (event) {
+    connect(event.data.senderId, "");
+  };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
     console.log(event);
