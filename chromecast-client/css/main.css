@@ -40,10 +40,6 @@ body {
 }
 
 .player {
-  background-image: url("assets/background.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   color: #f1f1f1;
   font-family: 'Open Sans',sans-serif;
   font-weight: 300;
@@ -52,21 +48,6 @@ body {
   right: 0;
   top: 0;
   bottom: 0;
-}
-
-.player .logo {
-  display: none;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom;
-  position: absolute;
-  bottom: 50%;
-  left: 50%;
-  background-image: url("assets/logo.png");
-  margin-bottom: -96px;
-  margin-left: -96px;
-  width: 192px;
-  height: 192px;
 }
 
 .player .placeholder-image {
