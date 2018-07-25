@@ -40,6 +40,7 @@ function init() {
     console.log(event);
   if(window.castReceiverManager.getSenders().length == 0 &&
     event.reason == cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
+      reset();
       window.close();
     }
   }
