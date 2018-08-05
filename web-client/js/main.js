@@ -124,6 +124,11 @@ function onSetSessionDescriptionError(error) {
 
 function gotRemoteStream(e) {
   console.log('gotstream');
+  if (e.receiver.track.kind == "audio") {
+    console.log("ignore audio track");
+    return;
+  }
+
   if (remoteVideo.srcObject !== e.streams[0]) {
     remoteVideo.srcObject = e.streams[0];
     console.log('peerConnection received remote stream');
