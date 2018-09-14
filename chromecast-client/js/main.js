@@ -34,13 +34,13 @@ function init() {
   mediaManager.onLoad = function (event) {
     var metadata = event.data.metadata;
     console.log(metadata);
-    //if (event.data.media.contentId.contsins {
+    if (metadata.signalServerUrl === undefined) {
       console.log("Don't have sessionid, it might not work trying connecting with " + event.data.media.contentId);
       connect(event.data.media.contentId, "");
-    /*} else {
+    } else {
       console.log("connectiong with " + metadata.signalServerUrl + ", sessionId " + sessionId);
       connect(metadata.signalServerUrl, metadata.sessionId);
-    }*/
+    }
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
