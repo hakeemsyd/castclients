@@ -33,8 +33,8 @@ function init() {
 
   mediaManager.onLoad = function (event) {
     var metadata = event.data.metadata;
-    var url = metadata.signalServerUrl == undefined ? event.data.media.contentId : metadata.signalServerUrl;
-    var sid = metadata.sessionId == undefined ? "" : metadata.sessionId;
+    var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
+    var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
     connect(url, sid);
   };
