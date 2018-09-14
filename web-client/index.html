@@ -20,7 +20,7 @@
 
   <base target="_blank">
 
-  <title>Web RTC Cast Client</title>
+  <title>Mirror client</title>
 
   <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
   <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
@@ -31,7 +31,7 @@
 <body>
   <div id="container">
     <div id='server_select_block'>
-      <label>Signal Server:</label>
+      <label id="status_msg">Signal Server:</label>
       <input id='server_url_text' name="textfield" type="text" placeholder='ws://ipaddress:8889/'/>
       <input id='sessionId' name="textfield" type="text" placeholder='e1525d4d-98ed-4ff3-9462-4ffaf1011157'/>
       <button id='connect_btn'>Connect</button>
@@ -43,7 +43,7 @@
           <option value="serv2">https://cast-server-calebmer.herokuapp.com/</option>
           <option value="serv3">https://cast-server-alexkom.herokuapp.com/</option>
       </select>-->
-      <label id="status_msg" color="red">Disconnected</label>
+      <!--<label id="status_msg" color="red">Disconnected</label>-->
     </div>
     <p id="page_title">Oculus</p>
     <video id="remoteVideo" autoplay></video>

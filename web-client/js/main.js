@@ -227,7 +227,7 @@ function setDisconnectedStatus() {
   console.log('Socket disconnected');
   var s = document.getElementById("status_msg");
   s.innerHTML = 'Disconnected';
-  s.style.color = 'red';
+  s.style.color = 'gray';
 }
 
 function reset() {
