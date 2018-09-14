@@ -32,8 +32,15 @@ function init() {
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    console.log(event);
-    connect(event.data.media.contentId, event.data.media.metadata.sessionId);
+    var metadata = event.data.metadata;
+    console.log(metadata);
+    if (event.metadata.sessionId == undefined) {
+      console.log("Don't have sessionid, it might not work trying connecting with " + event.data.media.contentId);
+      connect(event.data.media.contentId, "");
+    } else {
+      console.log("connectiong with " + metadata.serverUrl + ", sessionId " + sessionId);
+      connect(metadata.serverUrl, event.data.media.metadata.sessionId);
+    }
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
