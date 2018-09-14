@@ -32,7 +32,7 @@ function init() {
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    var metadata = event.data.metadata.metadata;
+    var metadata = event.data.media.metadata;
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
