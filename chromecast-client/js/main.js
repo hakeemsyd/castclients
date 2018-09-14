@@ -33,14 +33,10 @@ function init() {
 
   mediaManager.onLoad = function (event) {
     var metadata = event.data.metadata;
-    console.log(metadata);
-    if (metadata.signalServerUrl === undefined) {
-      console.log("Don't have sessionid, it might not work trying connecting with " + event.data.media.contentId);
-      connect(event.data.media.contentId, "");
-    } else {
-      console.log("connectiong with " + metadata.signalServerUrl + ", sessionId " + sessionId);
-      connect(metadata.signalServerUrl, metadata.sessionId);
-    }
+    var url = metadata.signalServerUrl == undefined ? event.data.media.contentId : metadata.signalServerUrl;
+    var sid = metadata.sessionId == undefined ? "" : metadata.sessionId;
+    console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
+    connect(url, sid);
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
