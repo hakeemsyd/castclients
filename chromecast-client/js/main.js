@@ -33,7 +33,7 @@ function init() {
 
   mediaManager.onLoad = function (event) {
     console.log(event);
-    connect(event.data.media.contentId, event.data.media.sessionId);
+    connect(event.data.media.contentId, event.data.media.metadata.sessionId);
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
