@@ -27,7 +27,7 @@ function init() {
   window.mediaElement = document.getElementById('remoteVideo');
   window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
   window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-  window.castReceiverManager.start();
+
   const context = cast.framework.CastReceiverContext.getInstance();
   const playerManager = context.getPlayerManager();
 
@@ -64,6 +64,7 @@ function init() {
     // sender message listener will be invoked
     window.messageBus.send(event.senderId, event.data);
   }
+  window.castReceiverManager.start();
 }
 
 // connect();
