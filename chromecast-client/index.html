@@ -8,6 +8,24 @@
 -->
 <html>
 <head>
+  <style type="text/css">
+   body {
+     overflow:hidden;
+   }
+     div{
+     height:720PX;
+     width:1280PX;
+     text-align:center;
+     border:0px solid silver;
+     display: table-cell;
+     vertical-align:middle;
+     color:#FFFFFF;
+     background-color:#000000;
+     font-weight:bold;
+     font-family:Verdana, Geneva, sans-serif;
+     font-size:40px;
+   }
+   </style>
   <!-- Change the title tag to your app's name to display as the details text on the Cast device picker -->
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,6 +39,7 @@
 </head>
 <body>
   <body>
+    <DIV id="message">Talk to me</DIV>
   <video id="remoteVideo" autoplay></video>
   <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>

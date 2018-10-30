@@ -47,6 +47,23 @@ function init() {
       window.close();
     }
   }
+
+
+  // create a CastMessageBus to handle messages for a custom namespace
+  window.messageBus =
+    window.castReceiverManager.getCastMessageBus(
+     'urn:x-cast:com.google.cast.sample.helloworld');
+
+    // handler for the CastMessageBus message event
+  window.messageBus.onMessage = function(event) {
+    console.log('Message [' + event.senderId + ']: ' + event.data);
+    // display the message from the sender
+    document.getElementById("message").innerHTML=text;
+       window.castReceiverManager.setApplicationState(text);
+    // inform all senders on the CastMessageBus of the incoming message event
+    // sender message listener will be invoked
+    window.messageBus.send(event.senderId, event.data);
+  }
 }
 
 // connect();
