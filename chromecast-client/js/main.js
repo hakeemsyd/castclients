@@ -123,35 +123,31 @@ function onCreateSessionDescriptionError(error) {
   console.log('Failed to create session description: ' + error.toString());
 }
 
-function hanleOfferFromRemote(desc) {
-  console.log('LS offer\n' + desc.sdp);
-  var servers = null;
-  var options = {
-    optional: [
-        {DtlsSrtpKeyAgreement: false}
-    ]
-  }
-
+function handleLaunch() {
   peerConnection = new RTCPeerConnection(servers, options);
   console.log('Created remote peer connection object peerConnection');
   peerConnection.onicecandidate = function(e) {
     onIceCandidate(peerConnection, e);
   };
+
   peerConnection.oniceconnectionstatechange = function(e) {
     onIceStateChange(peerConnection, e);
   };
   peerConnection.ontrack = gotRemoteStream;
 
+  console.log('Static answer set');
+  peerConnection.createAnswer(offerAnswerOptions).then(
+    onCreateAnswerSuccess,
+    onCreateSessionDescriptionError
+  );
+}
+
+function hanleOfferFromRemote(desc) {
   peerConnection.setRemoteDescription(desc).then(
     function() {
       onSetRemoteSuccess(peerConnection);
     },
     onSetSessionDescriptionError
-  );
-  console.log('Static answer set');
-  peerConnection.createAnswer(offerAnswerOptions).then(
-    onCreateAnswerSuccess,
-    onCreateSessionDescriptionError
   );
 }
 
@@ -184,6 +180,8 @@ function onCreateAnswerSuccess(desc) {
   peerConnection.setLocalDescription(desc).then(
     function() {
       onSetLocalSuccess(peerConnection);
+      var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
+      window.messageBus.send(sessionId, desc);
     },
     onSetSessionDescriptionError
   );
