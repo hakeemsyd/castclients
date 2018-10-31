@@ -19,6 +19,7 @@ setInterval(function () {
 }, 4000);
 
 var socket = null;
+var messageBus = null;
 
 init();
 
@@ -33,11 +34,11 @@ function init() {
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    /*var metadata = event.data.media.metadata;
+    var metadata = event.data.media.metadata;
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
-    console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);*/
-    // connect(url, sid);
+    console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
+    connect(url, sid);
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -52,26 +53,23 @@ function init() {
 
 function connect2() {
   // create a CastMessageBus to handle messages for a custom namespace
-  window.messageBus =
-    window.castReceiverManager.getCastMessageBus(
+  messageBus =
+    castReceiverManager.getCastMessageBus(
      'urn:x-cast:com.oculus.twilight');
 
     // handler for the CastMessageBus message event
-  window.messageBus.onMessage = function(event) {
+    messageBus.onMessage = function(event) {
     console.log('Message [' + event.senderId + ']: ' + event.data);
     // display the message from the sender
-    document.getElementById("message").innerHTML=text;
+    // document.getElementById("message").innerHTML=text;
     window.castReceiverManager.setApplicationState('hakeem');
     // inform all senders on the CastMessageBus of the incoming message event
     // sender message listener will be invoked
-    window.messageBus.send(event.senderId, event.data);
+    messageBus.send(event.senderId, event.data);
   }
-  console.log('starting it up now');
-  handleLaunch();
-  // window.messageBus.send("hakeem", "hakeem");
 }
 
-// connect();
+connect();
 
 function onIceCandidate(pc, event) {
   if (peerConnection != undefined && event.candidate) {
@@ -128,37 +126,35 @@ function onCreateSessionDescriptionError(error) {
   console.log('Failed to create session description: ' + error.toString());
 }
 
-function handleLaunch() {
+function hanleOfferFromRemote(desc) {
+  console.log('LS offer\n' + desc.sdp);
   var servers = null;
   var options = {
     optional: [
         {DtlsSrtpKeyAgreement: false}
     ]
   }
+
   peerConnection = new RTCPeerConnection(servers, options);
   console.log('Created remote peer connection object peerConnection');
   peerConnection.onicecandidate = function(e) {
     onIceCandidate(peerConnection, e);
   };
-
   peerConnection.oniceconnectionstatechange = function(e) {
     onIceStateChange(peerConnection, e);
   };
   peerConnection.ontrack = gotRemoteStream;
 
-  console.log('Static answer set');
-  peerConnection.createAnswer(offerAnswerOptions).then(
-    onCreateAnswerSuccess,
-    onCreateSessionDescriptionError
-  );
-}
-
-function hanleOfferFromRemote(desc) {
   peerConnection.setRemoteDescription(desc).then(
     function() {
       onSetRemoteSuccess(peerConnection);
     },
     onSetSessionDescriptionError
+  );
+  console.log('Static answer set');
+  peerConnection.createAnswer().then(
+    onCreateAnswerSuccess,
+    onCreateSessionDescriptionError
   );
 }
 
