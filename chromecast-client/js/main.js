@@ -130,6 +130,12 @@ function onCreateSessionDescriptionError(error) {
 }
 
 function handleLaunch() {
+  var servers = null;
+  var options = {
+    optional: [
+        {DtlsSrtpKeyAgreement: false}
+    ]
+  }
   peerConnection = new RTCPeerConnection(servers, options);
   console.log('Created remote peer connection object peerConnection');
   peerConnection.onicecandidate = function(e) {
