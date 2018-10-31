@@ -52,7 +52,7 @@ function init() {
   // create a CastMessageBus to handle messages for a custom namespace
   window.messageBus =
     window.castReceiverManager.getCastMessageBus(
-     'urn:x-cast:com.google.cast.sample.helloworld');
+     'urn:x-cast:com.oculus.twilight');
 
     // handler for the CastMessageBus message event
   window.messageBus.onMessage = function(event) {
@@ -64,6 +64,7 @@ function init() {
     // sender message listener will be invoked
     window.messageBus.send(event.senderId, event.data);
   }
+  console.log('starting it up now');
   window.castReceiverManager.start();
 }
 
