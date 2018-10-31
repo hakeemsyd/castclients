@@ -38,7 +38,6 @@ function init() {
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);*/
     // connect(url, sid);
-    handleLaunch();
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -68,6 +67,7 @@ function connect2() {
     window.messageBus.send(event.senderId, event.data);
   }
   console.log('starting it up now');
+  handleLaunch();
   // window.messageBus.send("hakeem", "hakeem");
 }
 
