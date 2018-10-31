@@ -69,7 +69,7 @@ function connect2() {
     window.messageBus.send(event.senderId, event.data);
   }
   console.log('starting it up now');
-  windows.messageBus.send("hakeem", "hakeem");
+  window.messageBus.send("hakeem", "hakeem");
 
 }
 
