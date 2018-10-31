@@ -28,7 +28,7 @@ function init() {
   window.mediaElement = document.getElementById('remoteVideo');
   window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
   window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-  connect2();
+  setupMessageBus();
   window.castReceiverManager.start();
   const context = cast.framework.CastReceiverContext.getInstance();
   const playerManager = context.getPlayerManager();
@@ -38,7 +38,9 @@ function init() {
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
-    connect(url, sid);
+    // connect(url, sid);
+    sessionId = sid;
+    messageBus.send(sid, JSON.stringify(startMsg));
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -51,7 +53,7 @@ function init() {
   }
 }
 
-function connect2() {
+function setupMessageBus() {
   // create a CastMessageBus to handle messages for a custom namespace
   messageBus =
     castReceiverManager.getCastMessageBus(
@@ -59,17 +61,30 @@ function connect2() {
 
     // handler for the CastMessageBus message event
     messageBus.onMessage = function(event) {
-    console.log('Message [' + event.senderId + ']: ' + event.data);
+    //console.log('Message [' + event.senderId + ']: ' + event.data);
     // display the message from the sender
     // document.getElementById("message").innerHTML=text;
-    window.castReceiverManager.setApplicationState('hakeem');
+    //window.castReceiverManager.setApplicationState('hakeem');
     // inform all senders on the CastMessageBus of the incoming message event
     // sender message listener will be invoked
-    messageBus.send(event.senderId, event.data);
+    // messageBus.send(event.senderId, event.data);
+    console.log(event.data);
+    var msg = JSON.parse(event.data);
+      switch(msg.type) {
+        case 0:
+          break;
+        case 1:
+            hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
+          break;
+        case 2:
+          break;
+        default:
+          break;
+    }
   }
 }
 
-connect();
+// connect();
 
 function onIceCandidate(pc, event) {
   if (peerConnection != undefined && event.candidate) {
@@ -189,7 +204,7 @@ function onCreateAnswerSuccess(desc) {
       onSetLocalSuccess(peerConnection);
       var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
       console.log('sending answer sdp');
-      window.messageBus.send(sessionId, desc);
+      // window.messageBus.send(sessionId, desc);
     },
     onSetSessionDescriptionError
   );
@@ -210,8 +225,7 @@ function onIceStateChange(pc, event) {
 
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
-
-function connect(url, sid) {
+/*function connect(url, sid) {
   reset();
   sessionId = sid;
   //var url = CHROMECAST_SENDER_URL;
@@ -231,6 +245,7 @@ function connect(url, sid) {
       data: 'Web Client',
     };
     socket.send(JSON.stringify(startMsg));
+
   };
 
   socket.onmessage = function (event) {
@@ -253,7 +268,7 @@ function connect(url, sid) {
   socket.onclose = function(event) {
     setDisconnectedStatus();
   }
-}
+}*/
 
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
