@@ -36,7 +36,24 @@ function init() {
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
-    connect(url, sid);
+    // connect(url, sid);
+
+    // create a CastMessageBus to handle messages for a custom namespace
+    window.messageBus =
+      window.castReceiverManager.getCastMessageBus(
+       'urn:x-cast:com.oculus.twilight');
+
+      // handler for the CastMessageBus message event
+    window.messageBus.onMessage = function(event) {
+      console.log('Message [' + event.senderId + ']: ' + event.data);
+      // display the message from the sender
+      document.getElementById("message").innerHTML=text;
+         window.castReceiverManager.setApplicationState(text);
+      // inform all senders on the CastMessageBus of the incoming message event
+      // sender message listener will be invoked
+      window.messageBus.send(event.senderId, event.data);
+    }
+    console.log('starting it up now');
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -48,23 +65,6 @@ function init() {
     }
   }
 
-
-  // create a CastMessageBus to handle messages for a custom namespace
-  window.messageBus =
-    window.castReceiverManager.getCastMessageBus(
-     'urn:x-cast:com.oculus.twilight');
-
-    // handler for the CastMessageBus message event
-  window.messageBus.onMessage = function(event) {
-    console.log('Message [' + event.senderId + ']: ' + event.data);
-    // display the message from the sender
-    document.getElementById("message").innerHTML=text;
-       window.castReceiverManager.setApplicationState(text);
-    // inform all senders on the CastMessageBus of the incoming message event
-    // sender message listener will be invoked
-    window.messageBus.send(event.senderId, event.data);
-  }
-  console.log('starting it up now');
   window.castReceiverManager.start();
 }
 
