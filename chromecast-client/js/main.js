@@ -48,6 +48,8 @@ function init() {
       window.close();
     }
   }
+
+  handleLaunch();
 }
 
 function connect2() {
@@ -67,6 +69,8 @@ function connect2() {
     window.messageBus.send(event.senderId, event.data);
   }
   console.log('starting it up now');
+  windows.messageBus.send("hakeem", "hakeem");
+
 }
 
 // connect();
