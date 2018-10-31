@@ -61,7 +61,7 @@ functin connect2() {
     console.log('Message [' + event.senderId + ']: ' + event.data);
     // display the message from the sender
     document.getElementById("message").innerHTML=text;
-       window.castReceiverManager.setApplicationState(text);
+    window.castReceiverManager.setApplicationState('hakeem');
     // inform all senders on the CastMessageBus of the incoming message event
     // sender message listener will be invoked
     window.messageBus.send(event.senderId, event.data);
@@ -184,6 +184,7 @@ function onCreateAnswerSuccess(desc) {
     function() {
       onSetLocalSuccess(peerConnection);
       var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
+      console.log('sending answer sdp');
       window.messageBus.send(sessionId, desc);
     },
     onSetSessionDescriptionError
