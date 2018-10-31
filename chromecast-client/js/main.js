@@ -50,7 +50,7 @@ function init() {
   }
 }
 
-functin connect2() {
+function connect2() {
   // create a CastMessageBus to handle messages for a custom namespace
   window.messageBus =
     window.castReceiverManager.getCastMessageBus(
