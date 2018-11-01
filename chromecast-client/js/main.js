@@ -19,7 +19,6 @@ setInterval(function () {
 }, 4000);
 
 var socket = null;
-var messageBus = null;
 
 init();
 
@@ -28,19 +27,16 @@ function init() {
   window.mediaElement = document.getElementById('remoteVideo');
   window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
   window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
-  setupMessageBus();
   window.castReceiverManager.start();
   const context = cast.framework.CastReceiverContext.getInstance();
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    var metadata = event.data.metadata.metadata;
+    var metadata = event.data.media.metadata;
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
-    // connect(url, sid);
-    sessionId = sid;
-    messageBus.send(sid, JSON.stringify(startMsg));
+    connect(url, sid);
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -49,37 +45,6 @@ function init() {
     event.reason == cast.receiver.system.DisconnectReason.REQUESTED_BY_SENDER) {
       reset();
       window.close();
-    }
-  }
-}
-
-function setupMessageBus() {
-  // create a CastMessageBus to handle messages for a custom namespace
-  messageBus =
-    castReceiverManager.getCastMessageBus(
-     'urn:x-cast:com.oculus.twilight');
-
-    // handler for the CastMessageBus message event
-    messageBus.onMessage = function(event) {
-    //console.log('Message [' + event.senderId + ']: ' + event.data);
-    // display the message from the sender
-    // document.getElementById("message").innerHTML=text;
-    //window.castReceiverManager.setApplicationState('hakeem');
-    // inform all senders on the CastMessageBus of the incoming message event
-    // sender message listener will be invoked
-    // messageBus.send(event.senderId, event.data);
-    console.log(event.data);
-    var msg = JSON.parse(event.data);
-      switch(msg.type) {
-        case 0:
-          break;
-        case 1:
-            hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
-          break;
-        case 2:
-          break;
-        default:
-          break;
     }
   }
 }
@@ -167,7 +132,7 @@ function hanleOfferFromRemote(desc) {
     onSetSessionDescriptionError
   );
   console.log('Static answer set');
-  peerConnection.createAnswer().then(
+  peerConnection.createAnswer(offerAnswerOptions).then(
     onCreateAnswerSuccess,
     onCreateSessionDescriptionError
   );
@@ -202,9 +167,6 @@ function onCreateAnswerSuccess(desc) {
   peerConnection.setLocalDescription(desc).then(
     function() {
       onSetLocalSuccess(peerConnection);
-      var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
-      console.log('sending answer sdp');
-      // window.messageBus.send(sessionId, desc);
     },
     onSetSessionDescriptionError
   );
@@ -225,7 +187,8 @@ function onIceStateChange(pc, event) {
 
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
-/*function connect(url, sid) {
+
+function connect(url, sid) {
   reset();
   sessionId = sid;
   //var url = CHROMECAST_SENDER_URL;
@@ -245,7 +208,6 @@ function onIceStateChange(pc, event) {
       data: 'Web Client',
     };
     socket.send(JSON.stringify(startMsg));
-
   };
 
   socket.onmessage = function (event) {
@@ -268,7 +230,7 @@ function onIceStateChange(pc, event) {
   socket.onclose = function(event) {
     setDisconnectedStatus();
   }
-}*/
+}
 
 function setConnectedStatus(url) {
   console.log('Connected to socket at: ' + url);
