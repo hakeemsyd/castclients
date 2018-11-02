@@ -40,7 +40,7 @@ function init() {
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
     // connect(url, sid);
     sessionId = sid;
-    messageBus.send(sid, JSON.stringify(startMsg));
+    messageBus.send(sid, JSON.stringify("Hello from chromecast, for twilight"));
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
