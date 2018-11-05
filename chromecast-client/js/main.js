@@ -34,12 +34,12 @@ function init() {
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    var metadata = event.data.media.metadata;
+    /*var metadata = event.data.media.metadata;
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
     // connect(url, sid);
-    sessionId = sid;
+    sessionId = sid;*/
     // messageBus.send(sid, JSON.stringify("Hello from chromecast, for twilight"));
   };
 
@@ -58,16 +58,7 @@ function setupMessageBus() {
   messageBus =
     castReceiverManager.getCastMessageBus(
      'urn:x-cast:com.oculus.twilight');
-
-    // handler for the CastMessageBus message event
     messageBus.onMessage = function(event) {
-    //console.log('Message [' + event.senderId + ']: ' + event.data);
-    // display the message from the sender
-    // document.getElementById("message").innerHTML=text;
-    //window.castReceiverManager.setApplicationState('hakeem');
-    // inform all senders on the CastMessageBus of the incoming message event
-    // sender message listener will be invoked
-    // messageBus.send(event.senderId, event.data);
     console.log(event.data);
     var msg = JSON.parse(event.data);
       switch(msg.type) {
@@ -280,7 +271,7 @@ function reset() {
   console.log('Reset state !');
   if (socket != null && socket.readyState == 1) {
     // socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
-    // messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
   }
 
   if (peerConnection != null) {
