@@ -65,6 +65,7 @@ function setupMessageBus() {
         case 0:
           break;
         case 1:
+            sessionId = msg.sessionId;
             hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
           break;
         case 2:
