@@ -93,7 +93,7 @@ function onIceCandidate(pc, event) {
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
       // socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
-      window.messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
+      messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
       // socket.close();
       answerSent = true;
     }
@@ -280,7 +280,7 @@ function reset() {
   console.log('Reset state !');
   if (socket != null && socket.readyState == 1) {
     // socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
-    window.messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    // messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
   }
 
   if (peerConnection != null) {
