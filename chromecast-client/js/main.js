@@ -11,14 +11,7 @@ var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
 var server_url = "";
-/*setInterval(function () {
-       if (socket != null && socket.readyState == 1) {
-            console.log('keep socket alive request')
-            socket.send("ping")
-        }
-}, 4000);*/
 
-var socket = null;
 var messageBus = null;
 
 init();
@@ -84,10 +77,7 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      // socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
-      // messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
       messageBus.broadcast(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
-      // socket.close();
       answerSent = true;
     }
 
@@ -216,53 +206,9 @@ function onIceStateChange(pc, event) {
 
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
-/*function connect(url, sid) {
-  reset();
-  sessionId = sid;
-  //var url = CHROMECAST_SENDER_URL;
-
-  console.log('reconnecting to ' + url);
-  if (socket != null) {
-    setDisconnectedStatus();
-    // socket.close();
-  }
-  socket = new WebSocket(url);
-
-  socket.onopen = function(event) {
-    setConnectedStatus(url);
-    var startMsg = {
-      sessionId: sessionId,
-      type: 0,
-      data: 'Web Client',
-    };
-    socket.send(JSON.stringify(startMsg));
-
-  };
-
-  socket.onmessage = function (event) {
-    console.log(event.data);
-    var msg = JSON.parse(event.data);
-
-    switch(msg.type) {
-      case 0:
-        break;
-      case 1:
-          hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
-        break;
-      case 2:
-        break;
-      default:
-        break;
-    }
-  }
-
-  socket.onclose = function(event) {
-    setDisconnectedStatus();
-  }
-}*/
 
 function setConnectedStatus(url) {
-  console.log('Connected to socket at: ' + url);
+  // console.log('Connected to socket at: ' + url);
 }
 
 function setDisconnectedStatus() {
@@ -271,10 +217,9 @@ function setDisconnectedStatus() {
 
 function reset() {
   console.log('Reset state !');
-  if (socket != null && socket.readyState == 1) {
-    // socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
-    // messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+  if (messageBus) {
     messageBus.broadcast(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    messageBus = null;
   }
 
   if (peerConnection != null) {
