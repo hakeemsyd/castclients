@@ -40,7 +40,7 @@ function init() {
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
     // connect(url, sid);
     sessionId = sid;
-    messageBus.send(sid, JSON.stringify("Hello from chromecast, for twilight"));
+    // messageBus.send(sid, JSON.stringify("Hello from chromecast, for twilight"));
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -204,7 +204,7 @@ function onCreateAnswerSuccess(desc) {
       onSetLocalSuccess(peerConnection);
       var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
       console.log('sending answer sdp');
-      // window.messageBus.send(sessionId, desc);
+      window.messageBus.send(sessionId, desc);
     },
     onSetSessionDescriptionError
   );
