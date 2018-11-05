@@ -203,9 +203,6 @@ function onCreateAnswerSuccess(desc) {
   peerConnection.setLocalDescription(desc).then(
     function() {
       onSetLocalSuccess(peerConnection);
-      var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
-      console.log('sending answer sdp');
-      window.messageBus.send(sessionId, message);
     },
     onSetSessionDescriptionError
   );
