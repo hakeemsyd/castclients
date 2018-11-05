@@ -11,12 +11,12 @@ var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
 var server_url = "";
-setInterval(function () {
+/*setInterval(function () {
        if (socket != null && socket.readyState == 1) {
             console.log('keep socket alive request')
             socket.send("ping")
         }
-}, 4000);
+}, 4000);*/
 
 var socket = null;
 var messageBus = null;
@@ -92,7 +92,8 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
+      // socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
+      window.messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
       // socket.close();
       answerSent = true;
     }
@@ -204,7 +205,7 @@ function onCreateAnswerSuccess(desc) {
       onSetLocalSuccess(peerConnection);
       var message = JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp})
       console.log('sending answer sdp');
-      window.messageBus.send(sessionId, desc);
+      window.messageBus.send(sessionId, message);
     },
     onSetSessionDescriptionError
   );
@@ -281,7 +282,8 @@ function setDisconnectedStatus() {
 function reset() {
   console.log('Reset state !');
   if (socket != null && socket.readyState == 1) {
-    socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    // socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    window.messageBus.send(sessionId, JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
   }
 
   if (peerConnection != null) {
