@@ -2,7 +2,6 @@ body {
   background: black;
 }
 video {
-  position: absolute;
   height: 100vh;
   min-height: 100%;
   width: 100vh;
