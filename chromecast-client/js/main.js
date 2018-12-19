@@ -11,14 +11,8 @@ var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
 var server_url = "";
-setInterval(function () {
-       if (socket != null && socket.readyState == 1) {
-            console.log('keep socket alive request')
-            socket.send("ping")
-        }
-}, 4000);
 
-var socket = null;
+var messageBus = null;
 
 init();
 
@@ -27,16 +21,19 @@ function init() {
   window.mediaElement = document.getElementById('remoteVideo');
   window.mediaManager = new cast.receiver.MediaManager(window.mediaElement);
   window.castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+  setupMessageBus();
   window.castReceiverManager.start();
   const context = cast.framework.CastReceiverContext.getInstance();
   const playerManager = context.getPlayerManager();
 
   mediaManager.onLoad = function (event) {
-    var metadata = event.data.media.metadata;
+    /*var metadata = event.data.media.metadata;
     var url = metadata.signalServerUrl === null || metadata.signalServerUrl === undefined ? event.data.media.contentId : metadata.signalServerUrl;
     var sid = metadata.sessionId === null || metadata.sessionId === undefined ? "" : metadata.sessionId;
     console.log('onLoad: connecting with url: ' + url + ', sessionId: ' + sid);
-    connect(url, sid);
+    // connect(url, sid);
+    sessionId = sid;*/
+    // messageBus.send(sid, JSON.stringify("Hello from chromecast, for twilight"));
   };
 
   window.castReceiverManager.onSenderDisconnected = function(event) {
@@ -49,6 +46,29 @@ function init() {
   }
 }
 
+function setupMessageBus() {
+  // create a CastMessageBus to handle messages for a custom namespace
+  messageBus =
+    castReceiverManager.getCastMessageBus(
+     'urn:x-cast:com.oculus.twilight');
+    messageBus.onMessage = function(event) {
+    console.log(event.data);
+    var msg = JSON.parse(event.data);
+      switch(msg.type) {
+        case 0:
+          break;
+        case 1:
+            sessionId = msg.sessionId;
+            hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
+          break;
+        case 2:
+          break;
+        default:
+          break;
+    }
+  }
+}
+
 // connect();
 
 function onIceCandidate(pc, event) {
@@ -57,8 +77,7 @@ function onIceCandidate(pc, event) {
     var res = peerConnection.localDescription
     if (!answerSent) {
       console.log('Answer from peerConnection:\n' + res.sdp);
-      socket.send(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
-      // socket.close();
+      messageBus.broadcast(JSON.stringify({sessionId: sessionId, type: 2, data: res.sdp}));
       answerSent = true;
     }
 
@@ -132,7 +151,7 @@ function hanleOfferFromRemote(desc) {
     onSetSessionDescriptionError
   );
   console.log('Static answer set');
-  peerConnection.createAnswer(offerAnswerOptions).then(
+  peerConnection.createAnswer().then(
     onCreateAnswerSuccess,
     onCreateSessionDescriptionError
   );
@@ -188,52 +207,8 @@ function onIceStateChange(pc, event) {
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
-function connect(url, sid) {
-  reset();
-  sessionId = sid;
-  //var url = CHROMECAST_SENDER_URL;
-
-  console.log('reconnecting to ' + url);
-  if (socket != null) {
-    setDisconnectedStatus();
-    // socket.close();
-  }
-  socket = new WebSocket(url);
-
-  socket.onopen = function(event) {
-    setConnectedStatus(url);
-    var startMsg = {
-      sessionId: sessionId,
-      type: 0,
-      data: 'Web Client',
-    };
-    socket.send(JSON.stringify(startMsg));
-  };
-
-  socket.onmessage = function (event) {
-    console.log(event.data);
-    var msg = JSON.parse(event.data);
-
-    switch(msg.type) {
-      case 0:
-        break;
-      case 1:
-          hanleOfferFromRemote({sdp: msg.data, type: 'offer'});
-        break;
-      case 2:
-        break;
-      default:
-        break;
-    }
-  }
-
-  socket.onclose = function(event) {
-    setDisconnectedStatus();
-  }
-}
-
 function setConnectedStatus(url) {
-  console.log('Connected to socket at: ' + url);
+  // console.log('Connected to socket at: ' + url);
 }
 
 function setDisconnectedStatus() {
@@ -242,8 +217,9 @@ function setDisconnectedStatus() {
 
 function reset() {
   console.log('Reset state !');
-  if (socket != null && socket.readyState == 1) {
-    socket.send(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+  if (messageBus) {
+    messageBus.broadcast(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
+    messageBus = null;
   }
 
   if (peerConnection != null) {
