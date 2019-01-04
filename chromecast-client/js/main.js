@@ -11,6 +11,7 @@ var startTime;
 var remoteVideo = document.getElementById('remoteVideo');
 var sessionId = "";
 var server_url = "";
+var prevConnectionState = "";
 
 var messageBus = null;
 
@@ -204,6 +205,18 @@ function onIceStateChange(pc, event) {
       return;
     }
 
+    if (
+      (pc.iceConnectionState == 'closed' ||
+        pc.iceConnectionState == 'failed') &&
+      prevConnectionState != 'closed' &&
+      prevConnectionState != 'failed'
+    ) {
+      setDisconnectedStatus();
+      reset();
+    }
+
+    prevConnectionState = pc.iceConnectionState;
+
     console.log(getName(pc) + ' ICE state: ' + pc.iceConnectionState);
 }
 
@@ -217,14 +230,17 @@ function setDisconnectedStatus() {
 
 function reset() {
   console.log('Reset state !');
+  if (peerConnection === null) {
+    return;
+  }
+
   if (messageBus) {
     messageBus.broadcast(JSON.stringify({sessionId: sessionId, type: 3, data: ""}));
     messageBus = null;
   }
 
-  if (peerConnection != null) {
-    peerConnection.close();
-  }
+  peerConnection.close();
+  window.castReceiverManager.stop();
   peerConnection = null;
   answerSent = false;
 }
